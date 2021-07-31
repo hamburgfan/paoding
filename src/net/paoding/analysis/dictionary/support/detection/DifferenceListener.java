@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package net.paoding.analysis.dictionary.support.detection;
+
 /**
  * 
  * @author Zhiliang Wang [qieqie.wang@gmail.com]
@@ -23,5 +24,5 @@ package net.paoding.analysis.dictionary.support.detection;
  */
 public interface DifferenceListener {
 
-	public void on(Difference diff) throws Exception ;
+	public void on(Difference diff) throws Exception;
 }

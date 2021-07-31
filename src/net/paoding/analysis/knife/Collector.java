@@ -35,14 +35,11 @@ public interface Collector {
 	 * 
 	 * 如当Knife收到“中国当代社会现象”文本流中的“社会”时，传入的参数分别将是：(“社会”, 4, 6)
 	 * 
-	 * @param word
-	 *            接收到的词语
-	 * @param offset
-	 *            该词语在文本流中的偏移位置
-	 * @param end
-	 *            该词语在文本流中的结束位置(词语不包括文本流end位置的字符)，end-offset是为word的长度
+	 * @param word   接收到的词语
+	 * @param offset 该词语在文本流中的偏移位置
+	 * @param end    该词语在文本流中的结束位置(词语不包括文本流end位置的字符)，end-offset是为word的长度
 	 * 
-	 *         
+	 * 
 	 */
 	public void collect(String word, int offset, int end);
 }

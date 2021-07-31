@@ -85,7 +85,7 @@ public class Word implements Comparable, CharSequence {
 	public boolean isNoiseWord() {
 		return (modifiers >> 1 & 1) == 1;
 	}
-	
+
 	public static void main(String[] args) {
 		Word w = new Word("");
 		System.out.println(w.isNoiseCharactor());

@@ -15,7 +15,6 @@
  */
 package net.paoding.analysis.dictionary.support.detection;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,46 +32,46 @@ public class Difference {
 	 * 
 	 * @return
 	 */
-	private List/* <Node> */modified = new LinkedList/* <Node> */();
+	private List/* <Node> */ modified = new LinkedList/* <Node> */();
 
 	/**
 	 * 删除了的
 	 * 
 	 * @return
 	 */
-	private List/* <Node> */deleted = new LinkedList/* <Node> */();
+	private List/* <Node> */ deleted = new LinkedList/* <Node> */();
 
 	/**
 	 * 新加的
 	 * 
 	 * @return
 	 */
-	private List/* <Node> */newcome = new LinkedList/* <Node> */();
+	private List/* <Node> */ newcome = new LinkedList/* <Node> */();
 
 	private Snapshot older;
 	private Snapshot younger;
 
-	public List/* <Node> */getModified() {
+	public List/* <Node> */ getModified() {
 		return modified;
 	}
 
-	public void setModified(List/* <Node> */modified) {
+	public void setModified(List/* <Node> */ modified) {
 		this.modified = modified;
 	}
 
-	public List/* <Node> */getDeleted() {
+	public List/* <Node> */ getDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(List/* <Node> */deleted) {
+	public void setDeleted(List/* <Node> */ deleted) {
 		this.deleted = deleted;
 	}
 
-	public List/* <Node> */getNewcome() {
+	public List/* <Node> */ getNewcome() {
 		return newcome;
 	}
 
-	public void setNewcome(List/* <Node> */newcome) {
+	public void setNewcome(List/* <Node> */ newcome) {
 		this.newcome = newcome;
 	}
 
@@ -100,8 +99,7 @@ public class Difference {
 		String smodified = ArraysToString(modified.toArray(new Node[] {}));
 		String snewcome = ArraysToString(newcome.toArray(new Node[] {}));
 		String sdeleted = ArraysToString(deleted.toArray(new Node[] {}));
-		return "modified=" + smodified + ";newcome=" + snewcome + ";deleted="
-				+ sdeleted;
+		return "modified=" + smodified + ";newcome=" + snewcome + ";deleted=" + sdeleted;
 	}
 
 	// 低于JDK1.5无Arrays.toString()方法，故有以下方法

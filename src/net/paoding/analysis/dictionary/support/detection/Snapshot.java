@@ -18,7 +18,6 @@ package net.paoding.analysis.dictionary.support.detection;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -40,7 +39,7 @@ public class Snapshot {
 	private String root;
 
 	// String为相对根的地址，使用/作为目录分隔符
-	private Map/*<String, InnerNode>*/ nodesMap = new HashMap/*<String, InnerNode>*/();
+	private Map/* <String, InnerNode> */ nodesMap = new HashMap/* <String, InnerNode> */();
 
 	//
 	private InnerNode[] nodes;
@@ -51,13 +50,13 @@ public class Snapshot {
 	public static Snapshot flash(String root, FileFilter filter) {
 		return flash(new File(root), filter);
 	}
-	
+
 	public static Snapshot flash(File rootFile, FileFilter filter) {
 		Snapshot snapshot = new Snapshot();
 		snapshot.implFlash(rootFile, filter);
 		return snapshot;
 	}
-	
+
 	private void implFlash(File rootFile, FileFilter filter) {
 		version = System.currentTimeMillis();
 		root = rootFile.getAbsolutePath().replace('\\', '/');
@@ -71,13 +70,12 @@ public class Snapshot {
 			rootNode.lastModified = rootFile.lastModified();
 			nodesMap.put(root, rootNode);
 			if (rootFile.isDirectory()) {
-				LinkedList/*<File>*/ files = getPosterity(rootFile, filter);
+				LinkedList/* <File> */ files = getPosterity(rootFile, filter);
 				nodes = new InnerNode[files.size()];
-				Iterator/*<File>*/ iter = files.iterator();
+				Iterator/* <File> */ iter = files.iterator();
 				for (int i = 0; i < nodes.length; i++) {
 					File f = (File) iter.next();
-					String path = f.getAbsolutePath().substring(
-							this.root.length() + 1);
+					String path = f.getAbsolutePath().substring(this.root.length() + 1);
 					path = path.replace('\\', '/');
 					InnerNode node = new InnerNode();
 					node.path = path;
@@ -119,7 +117,7 @@ public class Snapshot {
 		if (!younger.root.equals(older.root)) {
 			throw new IllegalArgumentException("the snaps should be same root");
 		}
-		for (int i = 0; i < older.nodes.length; i ++) {
+		for (int i = 0; i < older.nodes.length; i++) {
 			InnerNode olderNode = older.nodes[i];
 			InnerNode yongerNode = (InnerNode) younger.nodesMap.get((String) olderNode.path);
 			if (yongerNode == null) {
@@ -129,7 +127,7 @@ public class Snapshot {
 			}
 		}
 
-		for (int i = 0; i < younger.nodes.length; i ++) {
+		for (int i = 0; i < younger.nodes.length; i++) {
 			InnerNode yongerNode = younger.nodes[i];
 			InnerNode olderNode = (InnerNode) older.nodesMap.get((String) yongerNode.path);
 			if (olderNode == null) {
@@ -151,17 +149,13 @@ public class Snapshot {
 		System.out.println("----");
 		Snapshot snapshot2 = Snapshot.flash(f, null);
 		Difference diff = snapshot2.diff(snapshot1);
-		String deleted = ArraysToString(diff.getDeleted().toArray(
-				new Node[] {}));
+		String deleted = ArraysToString(diff.getDeleted().toArray(new Node[] {}));
 		System.out.println("deleted: " + deleted);
-		String modified = ArraysToString(diff.getModified().toArray(
-				new Node[] {}));
+		String modified = ArraysToString(diff.getModified().toArray(new Node[] {}));
 		System.out.println("modified: " + modified);
-		String newcome = ArraysToString(diff.getNewcome().toArray(
-				new Node[] {}));
+		String newcome = ArraysToString(diff.getNewcome().toArray(new Node[] {}));
 		System.out.println("newcome: " + newcome);
 	}
-	
 
 	// 低于JDK1.5无Arrays.toString()方法，故有以下方法
 	private static String ArraysToString(Object[] a) {
@@ -183,15 +177,15 @@ public class Snapshot {
 
 	// --------------------------------------------
 
-	private LinkedList/*<File>*/ getPosterity(File root, FileFilter filter) {
-		ArrayList/*<File>*/ dirs = new ArrayList/*<File>*/();
-		LinkedList/*<File>*/ files = new LinkedList/*<File>*/();
+	private LinkedList/* <File> */ getPosterity(File root, FileFilter filter) {
+		ArrayList/* <File> */ dirs = new ArrayList/* <File> */();
+		LinkedList/* <File> */ files = new LinkedList/* <File> */();
 		dirs.add(root);
 		int index = 0;
 		while (index < dirs.size()) {
 			File cur = (File) dirs.get(index++);
 			File[] children = cur.listFiles();
-			for (int i = 0; i < children.length; i ++) {
+			for (int i = 0; i < children.length; i++) {
 				File f = children[i];
 				if (filter == null || filter.accept(f)) {
 					if (f.isDirectory()) {

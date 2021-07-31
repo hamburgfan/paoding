@@ -41,7 +41,7 @@ public class Detector implements Runnable {
 	private long interval;
 
 	private Snapshot lastSnapshot;
-	
+
 	private Thread thread;
 
 	private boolean alive = true;
@@ -73,8 +73,8 @@ public class Detector implements Runnable {
 	public void setFilter(FileFilter filter) {
 		this.filter = filter;
 	}
-	
-	public Snapshot flash(){
+
+	public Snapshot flash() {
 		return Snapshot.flash(home, filter);
 	}
 
@@ -86,20 +86,18 @@ public class Detector implements Runnable {
 		thread.setDaemon(daemon);
 		thread.start();
 	}
-	
-	
+
 	public Snapshot getLastSnapshot() {
 		return lastSnapshot;
 	}
-	
+
 	public void setLastSnapshot(Snapshot last) {
 		this.lastSnapshot = last;
 	}
 
 	public void run() {
 		if (interval <= 0)
-			throw new IllegalArgumentException(
-					"should set a interval(>0) for the detection.");
+			throw new IllegalArgumentException("should set a interval(>0) for the detection.");
 		while (alive) {
 			sleep();
 			forceDetecting();

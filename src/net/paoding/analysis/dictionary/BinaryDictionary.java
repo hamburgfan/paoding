@@ -26,22 +26,17 @@ package net.paoding.analysis.dictionary;
  */
 public class BinaryDictionary implements Dictionary {
 
-	// -------------------------------------------------
-
 	private Word[] ascWords;
 
 	private final int start;
 	private final int end;
 	private final int count;
 
-	// -------------------------------------------------
-
 	/**
 	 * 以一组升序排列的词语构造二叉查找字典
 	 * <p>
 	 * 
-	 * @param ascWords
-	 *            升序排列词语
+	 * @param ascWords 升序排列词语
 	 */
 	public BinaryDictionary(Word[] ascWords) {
 		this(ascWords, 0, ascWords.length);
@@ -53,8 +48,6 @@ public class BinaryDictionary implements Dictionary {
 		this.end = end;
 		this.count = end - start;
 	}
-
-	// -------------------------------------------------
 
 	public Word get(int index) {
 		return ascWords[start + index];
@@ -105,14 +98,11 @@ public class BinaryDictionary implements Dictionary {
 				asPrex = false;
 			}
 		}
-		return asPrex ? new Hit(Hit.UNCLOSED_INDEX, null, nextWord)
-				: Hit.UNDEFINED;
+		return asPrex ? new Hit(Hit.UNCLOSED_INDEX, null, nextWord) : Hit.UNDEFINED;
 	}
 
-	public static int compare(CharSequence one, int begin, int count,
-			CharSequence theOther) {
-		for (int i = begin, j = 0; i < one.length()
-				&& j < Math.min(theOther.length(), count); i++, j++) {
+	public static int compare(CharSequence one, int begin, int count, CharSequence theOther) {
+		for (int i = begin, j = 0; i < one.length() && j < Math.min(theOther.length(), count); i++, j++) {
 			if (one.charAt(i) > theOther.charAt(j)) {
 				return 1;
 			} else if (one.charAt(i) < theOther.charAt(j)) {

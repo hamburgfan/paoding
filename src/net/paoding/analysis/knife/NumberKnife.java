@@ -26,7 +26,7 @@ import net.paoding.analysis.dictionary.Hit;
 public class NumberKnife extends CombinatoricsKnife implements DictionariesWare {
 
 	private Dictionary units;
-	
+
 	public NumberKnife() {
 	}
 
@@ -38,7 +38,6 @@ public class NumberKnife extends CombinatoricsKnife implements DictionariesWare 
 		super.setDictionaries(dictionaries);
 		units = dictionaries.getUnitsDictionary();
 	}
-	
 
 	public int assignable(Beef beef, int offset, int index) {
 		char ch = beef.charAt(index);
@@ -46,13 +45,13 @@ public class NumberKnife extends CombinatoricsKnife implements DictionariesWare 
 			return ASSIGNED;
 		if (index > offset) {
 			if (CharSet.isLantingLetter(ch) || ch == '.' || ch == '-' || ch == '_') {
-				if (CharSet.isLantingLetter(ch)
-						|| !CharSet.isArabianNumber(beef.charAt(index + 1))) {
-					//分词效果
-					//123.456		->123.456/
-					//123.abc.34	->123/123.abc.34/abc/34/	["abc"、"abc/34"系由LetterKnife分出，非NumberKnife]
-					//没有或判断!CharSet.isArabianNumber(beef.charAt(index + 1))，则分出"123."，而非"123"
-					//123.abc.34	->123./123.abc.34/abc/34/
+				if (CharSet.isLantingLetter(ch) || !CharSet.isArabianNumber(beef.charAt(index + 1))) {
+					// 分词效果
+					// 123.456 ->123.456/
+					// 123.abc.34 ->123/123.abc.34/abc/34/
+					// ["abc"、"abc/34"系由LetterKnife分出，非NumberKnife]
+					// 没有或判断!CharSet.isArabianNumber(beef.charAt(index + 1))，则分出"123."，而非"123"
+					// 123.abc.34 ->123./123.abc.34/abc/34/
 					return POINT;
 				}
 				return ASSIGNED;
@@ -60,17 +59,16 @@ public class NumberKnife extends CombinatoricsKnife implements DictionariesWare 
 		}
 		return LIMIT;
 	}
-	
-	protected int collectLimit(Collector collector, Beef beef,
-			int offset, int point, int limit, int dicWordVote) {
+
+	protected int collectLimit(Collector collector, Beef beef, int offset, int point, int limit, int dicWordVote) {
 		// "123abc"的直接调用super的
 		if (point != -1) {
 			return super.collectLimit(collector, beef, offset, point, limit, dicWordVote);
 		}
-		// 
+		//
 		// 2.2两
-		//    ^=_point
-		//     
+		// ^=_point
+		//
 		final int _point = limit;
 		// 当前尝试判断的字符的位置
 		int curTail = offset;
@@ -78,18 +76,17 @@ public class NumberKnife extends CombinatoricsKnife implements DictionariesWare 
 		int number2 = -1;
 		int bitValue = 0;
 		int maxUnit = 0;
-		//TODO:这里又重复从curTail(其值为offset)判断，重新遍历判断是否为数字，算是一个重复计算
-		//但考虑这个计算对中文分词性能影响微乎其微暂时先不优化
+		// TODO:这里又重复从curTail(其值为offset)判断，重新遍历判断是否为数字，算是一个重复计算
+		// 但考虑这个计算对中文分词性能影响微乎其微暂时先不优化
 		for (; (bitValue = CharSet.toNumber(beef.charAt(curTail))) >= 0; curTail++) {
-			// 
+			//
 			if (bitValue == 2
-					&& (beef.charAt(curTail) == '两' || beef.charAt(curTail) == '俩' || beef
-							.charAt(curTail) == '倆')) {
+					&& (beef.charAt(curTail) == '两' || beef.charAt(curTail) == '俩' || beef.charAt(curTail) == '倆')) {
 				if (curTail != offset) {
 					break;
 				}
 			}
-			// 处理连续汉字个位值的数字："三四五六"	->"3456"
+			// 处理连续汉字个位值的数字："三四五六" ->"3456"
 			if (bitValue >= 0 && bitValue < 10) {
 				if (number2 < 0)
 					number2 = bitValue;
@@ -127,13 +124,12 @@ public class NumberKnife extends CombinatoricsKnife implements DictionariesWare 
 		}
 		if (number1 >= 0 && curTail > _point) {
 			doCollect(collector, String.valueOf(number1), beef, offset, curTail);
-		}
-		else {
+		} else {
 			super.collectLimit(collector, beef, offset, point, limit, dicWordVote);
 		}
-		
+
 		curTail = curTail > limit ? curTail : limit;
-		
+
 		//
 		// 后面可能跟了计量单位
 		if (units != null && CharSet.isCjkUnifiedIdeographs(beef.charAt(curTail))) {
@@ -147,16 +143,15 @@ public class NumberKnife extends CombinatoricsKnife implements DictionariesWare 
 					break;
 				}
 			}
-			i --;
+			i--;
 			if (wd2 != null) {
 				collector.collect(wd2.getWord().getText(), curTail, i);
 				return i;
 			}
 		}
 		//
-		
+
 		return curTail > limit ? curTail : -1;
 	}
-
 
 }

@@ -15,7 +15,6 @@
  */
 package net.paoding.analysis.knife;
 
-
 /**
  * Paoding是一个背着“刀箱”(内藏各种“刀”)毕生精力“解牛”的人，即“庖丁”。
  * <p>

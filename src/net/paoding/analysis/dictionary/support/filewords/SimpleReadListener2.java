@@ -24,15 +24,16 @@ import net.paoding.analysis.dictionary.Word;
 
 /**
  * 本类用于读取编译后的词典
+ * 
  * @author Zhiliang Wang [qieqie.wang@gmail.com]
  * 
  * @since 1.0
  * 
  */
 public class SimpleReadListener2 implements ReadListener {
-	private Map/* <String, Collection<Word>> */dics = new Hashtable/* <String, Collection<String>> */();
+	private Map/* <String, Collection<Word>> */ dics = new Hashtable/* <String, Collection<String>> */();
 	private Class collectionClass = HashSet.class;
-	private Collection/* <Word> */words;
+	private Collection/* <Word> */ words;
 	private String ext = ".dic";
 
 	public SimpleReadListener2(Class collectionClass, String ext) {
@@ -65,15 +66,13 @@ public class SimpleReadListener2 implements ReadListener {
 
 	public void onWord(String wordText) {
 		wordText = wordText.trim().toLowerCase();
-		if (wordText.length() == 0 || wordText.charAt(0) == '#'
-				|| wordText.charAt(0) == '-') {
+		if (wordText.length() == 0 || wordText.charAt(0) == '#' || wordText.charAt(0) == '-') {
 			return;
 		}
-		
+
 		if (!wordText.endsWith("]")) {
 			words.add(new Word(wordText));
-		}
-		else {
+		} else {
 			int index = wordText.indexOf('[');
 			Word w = new Word(wordText.substring(0, index));
 			int mindex = wordText.indexOf("m=", index);
@@ -84,7 +83,7 @@ public class SimpleReadListener2 implements ReadListener {
 		}
 	}
 
-	public Map/* <String, Collection<Word>> */getResult() {
+	public Map/* <String, Collection<Word>> */ getResult() {
 		return dics;
 	}
 

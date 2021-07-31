@@ -9,10 +9,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 
+import org.apache.lucene.analysis.Analyzer;
+
 import net.paoding.analysis.analyzer.PaodingAnalyzer;
 import net.paoding.analysis.knife.PaodingMaker;
-
-import org.apache.lucene.analysis.Analyzer;
 
 public class TryPaodingAnalyzer {
 	private static final String ARGS_TIP = ":";
@@ -24,11 +24,11 @@ public class TryPaodingAnalyzer {
 	static String analyzerName = null;
 	static String print = null;
 	static String properties = PaodingMaker.DEFAULT_PROPERTIES_PATH;
-	
+
 	public static void main(String[] args) {
 		try {
 			resetArgs();
-			
+
 			int inInput = 0;
 			for (int i = 0; i < args.length; i++) {
 				if (args[i] == null || (args[i] = args[i].trim()).length() == 0) {
@@ -48,14 +48,13 @@ public class TryPaodingAnalyzer {
 					print = args[++i];
 				} else if (args[i].equals("--input") || args[i].equals("-i")) {
 					inInput++;
-				} else if (args[i].equals("--help") || args[i].equals("-h")
-						|| args[i].equals("?")) {
+				} else if (args[i].equals("--help") || args[i].equals("-h") || args[i].equals("?")) {
 					printHelp();
 					return;
 				} else {
 					// 非选项的参数数组视为input
-					if (!args[i].startsWith("-")
-							&& (i == 0 || args[i - 1].equals("-i") || args[i - 1].equals("--input") || !args[i - 1].startsWith("-"))) {
+					if (!args[i].startsWith("-") && (i == 0 || args[i - 1].equals("-i") || args[i - 1].equals("--input")
+							|| !args[i - 1].startsWith("-"))) {
 						if (input == null) {
 							input = args[i];// !!没有++i
 						} else {
@@ -77,8 +76,6 @@ public class TryPaodingAnalyzer {
 		}
 	}
 
-
-
 	private static void resetArgs() {
 		input = null;
 		file = null;
@@ -89,30 +86,24 @@ public class TryPaodingAnalyzer {
 		analyzerName = null;
 		properties = PaodingMaker.DEFAULT_PROPERTIES_PATH;
 	}
-	
 
-	
 	private static void analysing() throws Exception {
 		Analyzer analyzer;
 		if (analyzerName == null || analyzerName.length() == 0 || analyzerName.equalsIgnoreCase("paoding")) {
-			//properties==null等同于new new PaodingAnalyzer();
+			// properties==null等同于new new PaodingAnalyzer();
 			analyzer = new PaodingAnalyzer(properties);
 			if (mode != null) {
 				((PaodingAnalyzer) analyzer).setMode(mode);
 			}
-		}
-		else {
+		} else {
 			Class clz;
 			if (analyzerName.equalsIgnoreCase("standard")) {
 				analyzerName = "org.apache.lucene.analysis.standard.StandardAnalyzer";
-			}
-			else if (analyzerName.equalsIgnoreCase("cjk")) {
+			} else if (analyzerName.equalsIgnoreCase("cjk")) {
 				analyzerName = "org.apache.lucene.analysis.cjk.CJKAnalyzer";
-			}
-			else if (analyzerName.equalsIgnoreCase("cn") || analyzerName.equalsIgnoreCase("chinese")) {
+			} else if (analyzerName.equalsIgnoreCase("cn") || analyzerName.equalsIgnoreCase("chinese")) {
 				analyzerName = "org.apache.lucene.analysis.cn.ChineseAnalyzer";
-			}
-			else if (analyzerName.equalsIgnoreCase("st") || analyzerName.equalsIgnoreCase("standard")) {
+			} else if (analyzerName.equalsIgnoreCase("st") || analyzerName.equalsIgnoreCase("standard")) {
 				analyzerName = "org.apache.lucene.analysis.standard.StandardAnalyzer";
 			}
 			clz = Class.forName(analyzerName);
@@ -132,8 +123,7 @@ public class TryPaodingAnalyzer {
 				if (input == null || input.length() == 0) {
 					System.out.println("Warn: none charactors you input!!");
 					continue;
-				}
-				else if (input.startsWith(ARGS_TIP)) {
+				} else if (input.startsWith(ARGS_TIP)) {
 					String argsStr = input.substring(ARGS_TIP.length());
 					main(argsStr.split(" "));
 					continue;
@@ -142,8 +132,7 @@ public class TryPaodingAnalyzer {
 			if (reader != null) {
 				estimate.test(System.out, reader);
 				reader = null;
-			}
-			else {
+			} else {
 				estimate.test(System.out, input);
 				input = null;
 			}
@@ -157,8 +146,7 @@ public class TryPaodingAnalyzer {
 	private static String getInputFromConsole() throws IOException {
 		printTitleIfNotPrinted("");
 		String input = null;
-		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				System.in));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		String line;
 		do {
 			System.out.print("paoding> ");
@@ -170,23 +158,20 @@ public class TryPaodingAnalyzer {
 				input = null;
 				System.out.println("paoding> Cleared");
 				return getInputFromConsole();
-			}
-			else if (line.equals(ARGS_TIP + "exit") || line.equals(ARGS_TIP + "quit") || line.equals(ARGS_TIP + "e") || line.equals(ARGS_TIP + "q") ) {
+			} else if (line.equals(ARGS_TIP + "exit") || line.equals(ARGS_TIP + "quit") || line.equals(ARGS_TIP + "e")
+					|| line.equals(ARGS_TIP + "q")) {
 				System.out.println("Bye!");
 				System.exit(0);
-			}
-			else if (input == null && line.startsWith(ARGS_TIP)) {
+			} else if (input == null && line.startsWith(ARGS_TIP)) {
 				input = line;
 				break;
-			}
-			else {
+			} else {
 				if (line.endsWith(";")) {
 					if (line.length() > ";".length()) {
 						input = line.substring(0, line.length() - ";".length());
 					}
 					break;
-				}
-				else {
+				} else {
 					if (input == null) {
 						input = line;
 					} else {
@@ -199,20 +184,21 @@ public class TryPaodingAnalyzer {
 	}
 
 	private static void printHelp() {
-		String app = System.getProperty("paoding.try.app",
-				"TryPaodingAnalyzer");
-		String cmd = System.getProperty("paoding.try.cmd", "java "
-				+ TryPaodingAnalyzer.class.getName());
+		String app = System.getProperty("paoding.try.app", "TryPaodingAnalyzer");
+		String cmd = System.getProperty("paoding.try.cmd", "java " + TryPaodingAnalyzer.class.getName());
 		System.out.println(app + "的用法:");
 		System.out.println("\t" + cmd + " [OPTIONS] [text_content]");
 		System.out.println("\nOPTIONS:");
 		System.out.println("\t--file, -f:\n\t\t文章以文件的形式输入，在前缀加上\"classpath:\"表示从类路径中寻找该文件。");
 		System.out.println("\t--charset, -c:\n\t\t文章的字符集编码，比如gbk,utf-8等。如果没有设置该选项，则使用Java环境默认的字符集编码。");
 		System.out.println("\t--properties, -p:\n\t\t不读取默认的类路径下的庖丁分词属性文件，而使用指定的文件，在前缀加上\"classpath:\"表示从类路径中寻找该文件。");
-		System.out.println("\t--mode, -m:\n\t\t强制使用给定的mode的分词器；可以设定为default,most-words,max-word-length或指定类名的其他mode(指定类名的，需要加前缀\"class:\")。");
+		System.out.println(
+				"\t--mode, -m:\n\t\t强制使用给定的mode的分词器；可以设定为default,most-words,max-word-length或指定类名的其他mode(指定类名的，需要加前缀\"class:\")。");
 		System.out.println("\t--input, -i:\n\t\t要被分词的文章内容；当没有通过-f或--file指定文章输入文件时可选择这个选项指定要被分词的内容。");
-		System.out.println("\t--analyzer, -a:\n\t\t测试其他分词器，通过--analyzer或-a指定其完整类名。特别地，paoding、cjk、chinese、st分别对应PaodingAnalyzer、CJKAnalyzer、ChineseAnalyzer、StandardAnalyzer");
-		System.out.println("\t--print, -P:\n\t\t 是否打印分词结果。默认打印前50行。规则：no表示不打印；50等价于1-50行；1-50表示打印1至50行;可以以逗号组合使用，如20,40-50表示打印1-20以及40-50行");
+		System.out.println(
+				"\t--analyzer, -a:\n\t\t测试其他分词器，通过--analyzer或-a指定其完整类名。特别地，paoding、cjk、chinese、st分别对应PaodingAnalyzer、CJKAnalyzer、ChineseAnalyzer、StandardAnalyzer");
+		System.out.println(
+				"\t--print, -P:\n\t\t 是否打印分词结果。默认打印前50行。规则：no表示不打印；50等价于1-50行；1-50表示打印1至50行;可以以逗号组合使用，如20,40-50表示打印1-20以及40-50行");
 		System.out.println("\n示例:");
 		System.out.println("\t" + cmd);
 		System.out.println("\t" + cmd + " ?");
@@ -225,10 +211,10 @@ public class TryPaodingAnalyzer {
 		titlePrinted = false;
 		printTitleIfNotPrinted("\t");
 	}
-	
-	
+
 	private static boolean titlePrinted = false;
 	private static boolean welcomePrinted = false;
+
 	private static void printTitleIfNotPrinted(String prefix) {
 		if (!titlePrinted) {
 			System.out.println();
@@ -247,32 +233,29 @@ public class TryPaodingAnalyzer {
 			titlePrinted = true;
 		}
 	}
-	
-		
+
 	static String getContent(String path, String encoding) throws IOException {
 		return (String) read(path, encoding, true);
 	}
-	
+
 	static Reader getReader(String path, String encoding) throws IOException {
 		return (Reader) read(path, encoding, false);
 	}
-	
+
 	static Object read(String path, String encoding, boolean return_string) throws IOException {
 		InputStream in;
 		if (path.startsWith("classpath:")) {
 			path = path.substring("classpath:".length());
 			URL url = Estimate.class.getClassLoader().getResource(path);
 			if (url == null) {
-				throw new IllegalArgumentException("Not found " + path
-						+ " in classpath.");
+				throw new IllegalArgumentException("Not found " + path + " in classpath.");
 			}
 			System.out.println("read content from:" + url.getFile());
 			in = url.openStream();
 		} else {
 			File f = new File(path);
 			if (!f.exists()) {
-				throw new IllegalArgumentException("Not found " + path
-						+ " in system.");
+				throw new IllegalArgumentException("Not found " + path + " in system.");
 			}
 			System.out.println("read content from:" + f.getAbsolutePath());
 			in = new FileInputStream(f);
@@ -295,5 +278,5 @@ public class TryPaodingAnalyzer {
 		}
 		re.close();
 		return content.toString();
-		}
+	}
 }

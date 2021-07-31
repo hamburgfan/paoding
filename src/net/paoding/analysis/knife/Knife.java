@@ -74,13 +74,10 @@ public interface Knife {
 	/**
 	 * 返回beef的index位置字符的性质，{@link KnifeBox}据此决定将一段文本内容“交给”一个合适的Knife切词
 	 * 
-	 * @param beef
-	 *            要被分词的字符串
-	 * @param offset
-	 *            Knife开始或有可能开始切词的始发位置。
-	 * @param index
-	 *            被判断的字符的位置，本方法返回的即时该位置字符的性质。index>=offset。<br>
-	 *            当{@link KnifeBox}根据字符的性质(是否为{@link #ASSIGNED})选择Knife分解时，index=offset。
+	 * @param beef   要被分词的字符串
+	 * @param offset Knife开始或有可能开始切词的始发位置。
+	 * @param index  被判断的字符的位置，本方法返回的即时该位置字符的性质。index>=offset。<br>
+	 *               当{@link KnifeBox}根据字符的性质(是否为{@link #ASSIGNED})选择Knife分解时，index=offset。
 	 * @return index位置的字符在本Knife中的性质规定 <br>
 	 *         当offset==index时，仅当返回ASSIGNED时，该Knife才有机会被{@link KnifeBox}分配接收文本内容进行分词<br>
 	 *         (即才有机会调用dissect方法)
@@ -95,12 +92,9 @@ public interface Knife {
 	 * <p>
 	 * 分解从beef的offset位置开始，直至可能的结束的位置，结束时返回具有特定意义的一个非0数字。<br>
 	 * 
-	 * @param collector
-	 *            当分解到词语时，collector将被通知接收该词语
-	 * @param beef
-	 *            待分解的字符串内容，这个字符串可能是所要分解的全部字符串的一部分(比如文章中的某一部分)，当beef的最后一个字符为'\0'时，表示此次分解是文章最后一段。
-	 * @param offset
-	 *            此次分解从beef的offset位置开始，即本此分解只需从beef.charAt(offset)开始
+	 * @param collector 当分解到词语时，collector将被通知接收该词语
+	 * @param beef      待分解的字符串内容，这个字符串可能是所要分解的全部字符串的一部分(比如文章中的某一部分)，当beef的最后一个字符为'\0'时，表示此次分解是文章最后一段。
+	 * @param offset    此次分解从beef的offset位置开始，即本此分解只需从beef.charAt(offset)开始
 	 * @return 非0的整数，即正整数或负整数。<br>
 	 *         正数时：表示此次分解到该结束位置(不包括该边界)，即此次成功分解了从offset到该位置的文本流。<br>
 	 *         特别地，当其>=beef.lenght()表示已经把beef所有的词语分解完毕<br>

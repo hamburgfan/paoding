@@ -15,7 +15,6 @@
  */
 package net.paoding.analysis.knife;
 
-
 /**
  * 
  * @author Zhiliang Wang [qieqie.wang@gmail.com]
@@ -23,13 +22,10 @@ package net.paoding.analysis.knife;
  */
 public class LetterKnife extends CombinatoricsKnife {
 
-	public static final String[] DEFAULT_NOISE = { "a", "an", "and", "are", "as", "at",
-			"be", "but", "by", "for", "if", "in", "into", "is", "it", "no",
-			"not", "of", "on", "or", "such", "that", "the", "their", "then",
-			"there", "these", "they", "this", "to", "was", "will", "with",
-			"www" };
+	public static final String[] DEFAULT_NOISE = { "a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if",
+			"in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there",
+			"these", "they", "this", "to", "was", "will", "with", "www" };
 
-	
 	public LetterKnife() {
 		super(DEFAULT_NOISE);
 	}
@@ -50,6 +46,5 @@ public class LetterKnife extends CombinatoricsKnife {
 		}
 		return LIMIT;
 	}
-	
 
 }

@@ -56,12 +56,9 @@ public class Beef implements CharSequence {
 	/**
 	 * 构造函数
 	 * 
-	 * @param body
-	 *            被本对象中直接拥有的文本字符数组
-	 * @param offset
-	 *            字符开始位置，即get(i)返回body[offset+i]字符
-	 * @param count
-	 *            从offset位置开始的字符数
+	 * @param body   被本对象中直接拥有的文本字符数组
+	 * @param offset 字符开始位置，即get(i)返回body[offset+i]字符
+	 * @param count  从offset位置开始的字符数
 	 */
 	public Beef(char[] value, int offset, int count) {
 		this.value = value;
@@ -71,15 +68,15 @@ public class Beef implements CharSequence {
 	// -------------------------------------------------
 
 	public void set(int offset, int count) {
-        if (offset < 0) {
-            throw new StringIndexOutOfBoundsException(offset);
-        }
-        if (count < 0) {
-            throw new StringIndexOutOfBoundsException(count);
-        }
-        if (offset > value.length - count) {
-            throw new StringIndexOutOfBoundsException(offset + count);
-        }
+		if (offset < 0) {
+			throw new StringIndexOutOfBoundsException(offset);
+		}
+		if (count < 0) {
+			throw new StringIndexOutOfBoundsException(count);
+		}
+		if (offset > value.length - count) {
+			throw new StringIndexOutOfBoundsException(offset + count);
+		}
 		this.offset = offset;
 		this.count = count;
 	}
@@ -87,7 +84,6 @@ public class Beef implements CharSequence {
 	public char[] getValue() {
 		return value;
 	}
-
 
 	public int getCount() {
 		return count;
@@ -98,7 +94,7 @@ public class Beef implements CharSequence {
 	}
 
 	// -------------------------------------------------
-	
+
 	/**
 	 * 获取指定位置的字符。返回之前将被预处理：1)toLowerCase，2)全角转半角等
 	 */
@@ -130,7 +126,7 @@ public class Beef implements CharSequence {
 	}
 
 	// -------------------------------------------------
-	
+
 	public String toString() {
 		return new String(value, offset, count);
 	}

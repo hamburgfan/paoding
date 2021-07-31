@@ -33,15 +33,15 @@ import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import net.paoding.analysis.Constants;
 import net.paoding.analysis.analyzer.impl.MostWordsModeDictionariesCompiler;
 import net.paoding.analysis.analyzer.impl.SortingDictionariesCompiler;
 import net.paoding.analysis.dictionary.support.detection.Difference;
 import net.paoding.analysis.dictionary.support.detection.DifferenceListener;
 import net.paoding.analysis.exception.PaodingAnalysisException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * 
@@ -58,9 +58,9 @@ public class PaodingMaker {
 
 	private static Log log = LogFactory.getLog(PaodingMaker.class);
 
-	private static ObjectHolder/* <Properties> */propertiesHolder = new ObjectHolder/* <Properties> */();
+	private static ObjectHolder/* <Properties> */ propertiesHolder = new ObjectHolder/* <Properties> */();
 
-	private static ObjectHolder/* <Paoding> */paodingHolder = new ObjectHolder/* <Paoding> */();
+	private static ObjectHolder/* <Paoding> */ paodingHolder = new ObjectHolder/* <Paoding> */();
 
 	// ----------------获取Paoding对象的方法-----------------------
 
@@ -131,8 +131,7 @@ public class PaodingMaker {
 				propertiesHolder.set(path, p);
 				paodingHolder.remove(path);
 				postPropertiesLoaded(p);
-				String absolutePaths = p
-						.getProperty("paoding.analysis.properties.files.absolutepaths");
+				String absolutePaths = p.getProperty("paoding.analysis.properties.files.absolutepaths");
 				log.info("config paoding analysis from: " + absolutePaths);
 			}
 			return p;
@@ -144,24 +143,20 @@ public class PaodingMaker {
 	// -------------------私有 或 辅助方法----------------------------------
 
 	private static boolean modified(Properties p) throws IOException {
-		String lastModifieds = p
-				.getProperty("paoding.analysis.properties.lastModifieds");
+		String lastModifieds = p.getProperty("paoding.analysis.properties.lastModifieds");
 		String[] lastModifedsArray = lastModifieds.split(";");
 		String files = p.getProperty("paoding.analysis.properties.files");
 		String[] filesArray = files.split(";");
 		for (int i = 0; i < filesArray.length; i++) {
 			File file = getFile(filesArray[i]);
-			if (file.exists()
-					&& !String.valueOf(getFileLastModified(file)).equals(
-							lastModifedsArray[i])) {
+			if (file.exists() && !String.valueOf(getFileLastModified(file)).equals(lastModifedsArray[i])) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private static Properties loadProperties(Properties p, String path)
-			throws IOException {
+	private static Properties loadProperties(Properties p, String path) throws IOException {
 		URL url;
 		File file;
 		String absolutePath;
@@ -179,8 +174,7 @@ public class PaodingMaker {
 				if (skipWhenNotExists) {
 					return p;
 				}
-				throw new FileNotFoundException("Not found " + path
-						+ " in classpath.");
+				throw new FileNotFoundException("Not found " + path + " in classpath.");
 			}
 			file = new File(url.getFile());
 			in = url.openStream();
@@ -200,11 +194,9 @@ public class PaodingMaker {
 		absolutePath = file.getAbsolutePath();
 		p.load(in);
 		in.close();
-		String lastModifieds = p
-				.getProperty("paoding.analysis.properties.lastModifieds");
+		String lastModifieds = p.getProperty("paoding.analysis.properties.lastModifieds");
 		String files = p.getProperty("paoding.analysis.properties.files");
-		String absolutePaths = p
-				.getProperty("paoding.analysis.properties.files.absolutepaths");
+		String absolutePaths = p.getProperty("paoding.analysis.properties.files.absolutepaths");
 		if (lastModifieds == null) {
 			p.setProperty("paoding.dic.properties.path", path);
 			lastModifieds = String.valueOf(getFileLastModified(file));
@@ -215,11 +207,9 @@ public class PaodingMaker {
 			files = files + ";" + path;
 			absolutePaths = absolutePaths + ";" + absolutePath;
 		}
-		p.setProperty("paoding.analysis.properties.lastModifieds",
-				lastModifieds);
+		p.setProperty("paoding.analysis.properties.lastModifieds", lastModifieds);
 		p.setProperty("paoding.analysis.properties.files", files);
-		p.setProperty("paoding.analysis.properties.files.absolutepaths",
-				absolutePaths);
+		p.setProperty("paoding.analysis.properties.files.absolutepaths", absolutePaths);
 		String importsValue = p.getProperty("paoding.imports");
 		if (importsValue != null) {
 			p.remove("paoding.imports");
@@ -240,8 +230,7 @@ public class PaodingMaker {
 			path = path.replaceAll("%20", " ").replaceAll("\\\\", "/");
 			jarIndex = path.indexOf(".jar!");
 			int protocalIndex = path.indexOf(":");
-			String jarPath = path.substring(protocalIndex + ":".length(),
-					jarIndex + ".jar".length());
+			String jarPath = path.substring(protocalIndex + ":".length(), jarIndex + ".jar".length());
 			File jarPathFile = new File(jarPath);
 			JarFile jarFile;
 			try {
@@ -263,8 +252,7 @@ public class PaodingMaker {
 	}
 
 	private static void postPropertiesLoaded(Properties p) {
-		if ("done".equals(p
-				.getProperty("paoding.analysis.postPropertiesLoaded"))) {
+		if ("done".equals(p.getProperty("paoding.analysis.postPropertiesLoaded"))) {
 			return;
 		}
 		setDicHomeProperties(p);
@@ -272,8 +260,7 @@ public class PaodingMaker {
 	}
 
 	private static void setDicHomeProperties(Properties p) {
-		String dicHomeAbsultePath = p
-				.getProperty("paoding.dic.home.absolute.path");
+		String dicHomeAbsultePath = p.getProperty("paoding.dic.home.absolute.path");
 		if (dicHomeAbsultePath != null) {
 			return;
 		}
@@ -309,8 +296,7 @@ public class PaodingMaker {
 			if (f.exists()) {
 				dicHome = "dic/";
 			} else {
-				URL url = PaodingMaker.class.getClassLoader()
-						.getResource("dic");
+				URL url = PaodingMaker.class.getClassLoader().getResource("dic");
 				if (url != null) {
 					dicHome = "classpath:dic/";
 				}
@@ -330,16 +316,12 @@ public class PaodingMaker {
 		// 将dicHome转化为一个系统唯一的绝对路径，记录在属性对象中
 		File dicHomeFile = getFile(dicHome);
 		if (!dicHomeFile.exists()) {
-			throw new PaodingAnalysisException(
-					"not found the dic home dirctory! "
-							+ dicHomeFile.getAbsolutePath());
+			throw new PaodingAnalysisException("not found the dic home dirctory! " + dicHomeFile.getAbsolutePath());
 		}
 		if (!dicHomeFile.isDirectory()) {
-			throw new PaodingAnalysisException(
-					"dic home should not be a file, but a directory!");
+			throw new PaodingAnalysisException("dic home should not be a file, but a directory!");
 		}
-		p.setProperty("paoding.dic.home.absolute.path", dicHomeFile
-				.getAbsolutePath());
+		p.setProperty("paoding.dic.home.absolute.path", dicHomeFile.getAbsolutePath());
 	}
 
 	private static Paoding implMake(final Properties p) {
@@ -365,23 +347,20 @@ public class PaodingMaker {
 			paoding = createPaodingWithKnives(p);
 			final Paoding finalPaoding = paoding;
 			//
-			String compilerClassName = getProperty(p,
-					Constants.ANALYZER_DICTIONARIES_COMPILER);
+			String compilerClassName = getProperty(p, Constants.ANALYZER_DICTIONARIES_COMPILER);
 			Class compilerClass = null;
 			if (compilerClassName != null) {
 				compilerClass = Class.forName(compilerClassName);
 			}
 			if (compilerClass == null) {
 				String analyzerMode = getProperty(p, Constants.ANALYZER_MODE);
-				if ("most-words".equalsIgnoreCase(analyzerMode)
-						|| "default".equalsIgnoreCase(analyzerMode)) {
+				if ("most-words".equalsIgnoreCase(analyzerMode) || "default".equalsIgnoreCase(analyzerMode)) {
 					compilerClass = MostWordsModeDictionariesCompiler.class;
 				} else {
 					compilerClass = SortingDictionariesCompiler.class;
 				}
 			}
-			final DictionariesCompiler compiler = (DictionariesCompiler) compilerClass
-					.newInstance();
+			final DictionariesCompiler compiler = (DictionariesCompiler) compilerClass.newInstance();
 			new Function() {
 				public void run() throws Exception {
 					// 编译词典-对词典进行可能的处理，以符合分词器的要求
@@ -393,26 +372,22 @@ public class PaodingMaker {
 					}
 
 					// 使用编译后的词典
-					final Dictionaries dictionaries = compiler
-							.readCompliedDictionaries(p);
+					final Dictionaries dictionaries = compiler.readCompliedDictionaries(p);
 					setDictionaries(finalPaoding, dictionaries);
 
 					// 启动字典动态转载/卸载检测器
 					// 侦测时间间隔(秒)。默认为60秒。如果设置为０或负数则表示不需要进行检测
-					String intervalStr = getProperty(p,
-							Constants.DIC_DETECTOR_INTERVAL);
+					String intervalStr = getProperty(p, Constants.DIC_DETECTOR_INTERVAL);
 					int interval = Integer.parseInt(intervalStr);
 					if (interval > 0) {
-						dictionaries.startDetecting(interval,
-								new DifferenceListener() {
-									public void on(Difference diff)
-											throws Exception {
-										dictionaries.stopDetecting();
-										// 此处调用run方法，以当检测到**编译后**的词典变更/删除/增加时，
-										// 重新编译源词典、重新创建并启动dictionaries自检测
-										run();
-									}
-								});
+						dictionaries.startDetecting(interval, new DifferenceListener() {
+							public void on(Difference diff) throws Exception {
+								dictionaries.stopDetecting();
+								// 此处调用run方法，以当检测到**编译后**的词典变更/删除/增加时，
+								// 重新编译源词典、重新创建并启动dictionaries自检测
+								run();
+							}
+						});
 					}
 				}
 			}.run();
@@ -424,19 +399,17 @@ public class PaodingMaker {
 		}
 	}
 
-	private static Paoding createPaodingWithKnives(Properties p)
-			throws Exception {
+	private static Paoding createPaodingWithKnives(Properties p) throws Exception {
 		// 如果PaodingHolder中并没有缓存该属性文件或对象对应的Paoding对象，
 		// 则根据给定的属性创建一个新的Paoding对象，并在返回之前存入paodingHolder
 		Paoding paoding = new Paoding();
 
 		// 寻找传说中的Knife。。。。
-		final Map /* <String, Knife> */knifeMap = new HashMap /*
-																 * <String,
-																 * Knife>
+		final Map /* <String, Knife> */ knifeMap = new HashMap /*
+																 * <String, Knife>
 																 */();
-		final List /* <Knife> */knifeList = new LinkedList/* <Knife> */();
-		final List /* <Function> */functions = new LinkedList/* <Function> */();
+		final List /* <Knife> */ knifeList = new LinkedList/* <Knife> */();
+		final List /* <Function> */ functions = new LinkedList/* <Function> */();
 		Iterator iter = p.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry e = (Map.Entry) iter.next();
@@ -444,8 +417,7 @@ public class PaodingMaker {
 			final String value = (String) e.getValue();
 			int index = key.indexOf(Constants.KNIFE_CLASS);
 			if (index == 0 && key.length() > Constants.KNIFE_CLASS.length()) {
-				final int end = key
-						.indexOf('.', Constants.KNIFE_CLASS.length());
+				final int end = key.indexOf('.', Constants.KNIFE_CLASS.length());
 				if (end == -1) {
 					Class clazz = Class.forName(value);
 					Knife knife = (Knife) clazz.newInstance();
@@ -459,29 +431,19 @@ public class PaodingMaker {
 						public void run() throws Exception {
 							String knifeName = key.substring(0, end);
 							Object obj = knifeMap.get(knifeName);
-							if (!obj
-									.getClass()
-									.getName()
-									.equals(
-											"org.springframework.beans.BeanWrapperImpl")) {
-								Class beanWrapperImplClass = Class
-										.forName("org.springframework.beans.BeanWrapperImpl");
-								Method setWrappedInstance = beanWrapperImplClass
-										.getMethod("setWrappedInstance",
-												new Class[] { Object.class });
-								Object beanWrapperImpl = beanWrapperImplClass
-										.newInstance();
-								setWrappedInstance.invoke(beanWrapperImpl,
-										new Object[] { obj });
+							if (!obj.getClass().getName().equals("org.springframework.beans.BeanWrapperImpl")) {
+								Class beanWrapperImplClass = Class.forName("org.springframework.beans.BeanWrapperImpl");
+								Method setWrappedInstance = beanWrapperImplClass.getMethod("setWrappedInstance",
+										new Class[] { Object.class });
+								Object beanWrapperImpl = beanWrapperImplClass.newInstance();
+								setWrappedInstance.invoke(beanWrapperImpl, new Object[] { obj });
 								knifeMap.put(knifeName, beanWrapperImpl);
 								obj = beanWrapperImpl;
 							}
 							String propertyName = key.substring(end + 1);
-							Method setPropertyValue = obj.getClass().getMethod(
-									"setPropertyValue",
+							Method setPropertyValue = obj.getClass().getMethod("setPropertyValue",
 									new Class[] { String.class, Object.class });
-							setPropertyValue.invoke(obj, new Object[] {
-									propertyName, value });
+							setPropertyValue.invoke(obj, new Object[] { propertyName, value });
 						}
 					});
 				}
@@ -502,18 +464,15 @@ public class PaodingMaker {
 		String noiseCharactor = getProperty(p, Constants.DIC_NOISE_CHARACTOR);
 		String noiseWord = getProperty(p, Constants.DIC_NOISE_WORD);
 		String unit = getProperty(p, Constants.DIC_UNIT);
-		String confucianFamilyName = getProperty(p,
-				Constants.DIC_CONFUCIAN_FAMILY_NAME);
+		String confucianFamilyName = getProperty(p, Constants.DIC_CONFUCIAN_FAMILY_NAME);
 		String combinatorics = getProperty(p, Constants.DIC_FOR_COMBINATORICS);
 		String charsetName = getProperty(p, Constants.DIC_CHARSET);
-		Dictionaries dictionaries = new FileDictionaries(getDicHome(p),
-				skipPrefix, noiseCharactor, noiseWord, unit,
+		Dictionaries dictionaries = new FileDictionaries(getDicHome(p), skipPrefix, noiseCharactor, noiseWord, unit,
 				confucianFamilyName, combinatorics, charsetName);
 		return dictionaries;
 	}
 
-	private static void setDictionaries(Paoding paoding,
-			Dictionaries dictionaries) {
+	private static void setDictionaries(Paoding paoding, Dictionaries dictionaries) {
 		Knife[] knives = paoding.getKnives();
 		for (int i = 0; i < knives.length; i++) {
 			Knife knife = (Knife) knives[i];
@@ -557,18 +516,18 @@ public class PaodingMaker {
 
 	// --------------------------------------------------------------------
 
-	private static class ObjectHolder/* <T> */{
+	private static class ObjectHolder/* <T> */ {
 
 		private ObjectHolder() {
 		}
 
-		private Map/* <Object, T> */objects = new HashMap/* <Object, T> */();
+		private Map/* <Object, T> */ objects = new HashMap/* <Object, T> */();
 
-		public Object/* T */get(Object name) {
+		public Object/* T */ get(Object name) {
 			return objects.get(name);
 		}
 
-		public void set(Object name, Object/* T */object) {
+		public void set(Object name, Object/* T */ object) {
 			objects.put(name, object);
 		}
 
@@ -595,9 +554,9 @@ public class PaodingMaker {
 				}
 				Process process = Runtime.getRuntime().exec(cmd);
 				InputStreamReader isr = new InputStreamReader(process.getInputStream());
-				BufferedReader br = new BufferedReader(isr); 
+				BufferedReader br = new BufferedReader(isr);
 				String line;
-				while((line = br.readLine()) != null && line.startsWith(name)) {
+				while ((line = br.readLine()) != null && line.startsWith(name)) {
 					int index = line.indexOf(name + "=");
 					if (index != -1) {
 						return line.substring(index + name.length() + 1);

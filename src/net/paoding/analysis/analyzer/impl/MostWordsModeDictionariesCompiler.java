@@ -24,7 +24,7 @@ import net.paoding.analysis.knife.Knife;
 
 public class MostWordsModeDictionariesCompiler implements DictionariesCompiler {
 	public static final String VERSION = "2";
-	
+
 	public boolean shouldCompile(Properties p) throws Exception {
 		String lastModifieds = p.getProperty("paoding.analysis.properties.lastModifieds");
 		String files = p.getProperty("paoding.analysis.properties.files");
@@ -41,14 +41,13 @@ public class MostWordsModeDictionariesCompiler implements DictionariesCompiler {
 			String clazz = compiledProperties.getProperty("paoding.analysis.compiler.class");
 			String version = compiledProperties.getProperty("paoding.analysis.compiler.version");
 			if (lastModifieds.equals(compiledLastModifieds) && files.equals(compiledFiles)
-					&& this.getClass().getName().equalsIgnoreCase(clazz)
-					&& VERSION.equalsIgnoreCase(version)) {
+					&& this.getClass().getName().equalsIgnoreCase(clazz) && VERSION.equalsIgnoreCase(version)) {
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
 	public void compile(Dictionaries dictionaries, Knife knife, Properties p) throws Exception {
 		String dicHome = p.getProperty("paoding.dic.home.absolute.path");
 		String noiseCharactor = getProperty(p, Constants.DIC_NOISE_CHARACTOR);
@@ -57,7 +56,7 @@ public class MostWordsModeDictionariesCompiler implements DictionariesCompiler {
 		String confucianFamilyName = getProperty(p, Constants.DIC_CONFUCIAN_FAMILY_NAME);
 		String combinatorics = getProperty(p, Constants.DIC_FOR_COMBINATORICS);
 		String charsetName = getProperty(p, Constants.DIC_CHARSET);
-		
+
 		File dicHomeFile = new File(dicHome);
 		File compiledDicHomeFile = new File(dicHomeFile, ".compiled/most-words-mode");
 		compiledDicHomeFile.mkdirs();
@@ -86,14 +85,13 @@ public class MostWordsModeDictionariesCompiler implements DictionariesCompiler {
 		Dictionary combinatoricsDictionary = dictionaries.getCombinatoricsDictionary();
 		File combinatoricsDictionaryFile = new File(compiledDicHomeFile, combinatorics + ".dic.compiled");
 		sortCompile(combinatoricsDictionary, combinatoricsDictionaryFile, charsetName);
-		
+
 		//
 		File compliedMetadataFile = new File(dicHomeFile, ".compiled/most-words-mode/.metadata");
 		if (compliedMetadataFile.exists()) {
-			//compliedMetadataFile.setWritable(true);
+			// compliedMetadataFile.setWritable(true);
 			compliedMetadataFile.delete();
-		}
-		else {
+		} else {
 			compliedMetadataFile.getParentFile().mkdirs();
 		}
 		OutputStream compiledPropertiesOutput = new FileOutputStream(compliedMetadataFile);
@@ -109,7 +107,6 @@ public class MostWordsModeDictionariesCompiler implements DictionariesCompiler {
 		compliedMetadataFile.setReadOnly();
 	}
 
-
 	public Dictionaries readCompliedDictionaries(Properties p) {
 		String dicHomeAbsolutePath = p.getProperty("paoding.dic.home.absolute.path");
 		String noiseCharactor = getProperty(p, Constants.DIC_NOISE_CHARACTOR);
@@ -118,28 +115,23 @@ public class MostWordsModeDictionariesCompiler implements DictionariesCompiler {
 		String confucianFamilyName = getProperty(p, Constants.DIC_CONFUCIAN_FAMILY_NAME);
 		String combinatorics = getProperty(p, Constants.DIC_FOR_COMBINATORICS);
 		String charsetName = getProperty(p, Constants.DIC_CHARSET);
-		return new CompiledFileDictionaries(
-				dicHomeAbsolutePath + "/.compiled/most-words-mode",
-				noiseCharactor, noiseWord, unit,
-				confucianFamilyName, combinatorics, charsetName);
+		return new CompiledFileDictionaries(dicHomeAbsolutePath + "/.compiled/most-words-mode", noiseCharactor,
+				noiseWord, unit, confucianFamilyName, combinatorics, charsetName);
 	}
-	
+
 	private static String getProperty(Properties p, String name) {
 		return Constants.getProperty(p, name);
 	}
-	
 
-	private void sortCompile(final Dictionary dictionary, 
-			File dicFile, String charsetName) throws FileNotFoundException,
-			IOException, UnsupportedEncodingException {
+	private void sortCompile(final Dictionary dictionary, File dicFile, String charsetName)
+			throws FileNotFoundException, IOException, UnsupportedEncodingException {
 		int wordsSize = dictionary.size();
 		if (dicFile.exists()) {
-			//dicFile.setWritable(true);
+			// dicFile.setWritable(true);
 			dicFile.delete();
 		}
-		BufferedOutputStream out = new BufferedOutputStream(
-				new FileOutputStream(dicFile), 1024 * 16);
-		
+		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(dicFile), 1024 * 16);
+
 		for (int i = 0; i < wordsSize; i++) {
 			Word word = dictionary.get(i);
 			out.write(word.getText().getBytes(charsetName));
@@ -155,20 +147,19 @@ public class MostWordsModeDictionariesCompiler implements DictionariesCompiler {
 		out.close();
 		dicFile.setReadOnly();
 	}
-	
-	private void compileVocabulary(final Dictionary vocabularyDictionary, Knife knife,
-			File vocabularyFile, String charsetName) throws FileNotFoundException,
-			IOException, UnsupportedEncodingException {
+
+	private void compileVocabulary(final Dictionary vocabularyDictionary, Knife knife, File vocabularyFile,
+			String charsetName) throws FileNotFoundException, IOException, UnsupportedEncodingException {
 		int vocabularySize = vocabularyDictionary.size();
 		Word[] vocabularyWords = new Word[vocabularySize];
 		char[] chs = new char[128];
-		for (int i = 0; i < vocabularySize; i ++) {
+		for (int i = 0; i < vocabularySize; i++) {
 			final Word curWord = vocabularyDictionary.get(i);
 			curWord.getText().getChars(0, curWord.length(), chs, 0);
 			chs[curWord.length()] = (char) -1;
 			Beef beef = new Beef(chs, 0, curWord.length() + 1);
 			final BitSet bs = new BitSet(curWord.length());
-			knife.dissect(new Collector(){
+			knife.dissect(new Collector() {
 				public void collect(String word, int offset, int end) {
 					Hit hit = vocabularyDictionary.search(word, 0, word.length());
 					if (hit.isHit() && hit.getWord().length() != curWord.length()) {
@@ -177,10 +168,10 @@ public class MostWordsModeDictionariesCompiler implements DictionariesCompiler {
 						}
 					}
 				}
-				
+
 			}, beef, 0);
-			
-			for (int j = 0; j < curWord.length();j++) {
+
+			for (int j = 0; j < curWord.length(); j++) {
 				if (!bs.get(j)) {
 					vocabularyWords[i] = curWord;
 					break;
@@ -188,12 +179,11 @@ public class MostWordsModeDictionariesCompiler implements DictionariesCompiler {
 			}
 		}
 		if (vocabularyFile.exists()) {
-			//vocabularyFile.setWritable(true);
+			// vocabularyFile.setWritable(true);
 			vocabularyFile.delete();
 		}
-		BufferedOutputStream out = new BufferedOutputStream(
-				new FileOutputStream(vocabularyFile), 1024 * 16);
-		
+		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(vocabularyFile), 1024 * 16);
+
 		for (int i = 0; i < vocabularySize; i++) {
 			if (vocabularyWords[i] != null) {
 				out.write(vocabularyWords[i].getText().getBytes(charsetName));

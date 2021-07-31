@@ -15,11 +15,11 @@
  */
 package net.paoding.analysis.knife;
 
-
 import java.util.Properties;
+
 /**
  * 
- * @author  Zhiliang Wang [qieqie.wang@gmail.com]
+ * @author Zhiliang Wang [qieqie.wang@gmail.com]
  * 
  * @since 2.0.4
  */
@@ -32,7 +32,7 @@ public interface DictionariesCompiler {
 	 * @throws Exception
 	 */
 	public boolean shouldCompile(Properties p) throws Exception;
-	
+
 	/**
 	 * 
 	 * @param dictionaries
@@ -41,7 +41,7 @@ public interface DictionariesCompiler {
 	 * @throws Exception
 	 */
 	public void compile(Dictionaries dictionaries, Knife knife, Properties p) throws Exception;
-	
+
 	/**
 	 * 
 	 * @param p

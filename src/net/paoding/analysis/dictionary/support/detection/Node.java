@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package net.paoding.analysis.dictionary.support.detection;
+
 /**
  * 
  * @author Zhiliang Wang [qieqie.wang@gmail.com]

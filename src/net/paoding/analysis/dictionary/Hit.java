@@ -21,8 +21,7 @@ package net.paoding.analysis.dictionary;
  * 
  * Hit对象包含2类判断信息：
  * <li>要检索的词语是否存在于词典中: {@link #isHit()}</li>
- * <li>词典是否含有以给定字符串开头的其他词语: {@link #isUnclosed()}</li>
- * <br>
+ * <li>词典是否含有以给定字符串开头的其他词语: {@link #isUnclosed()}</li> <br>
  * 如果上面2个信息都是否定的，则 {@link #isUndefined()}返回true，否则返回false. <br>
  * <br>
  * 
@@ -41,15 +40,11 @@ package net.paoding.analysis.dictionary;
  */
 public class Hit {
 
-	// -------------------------------------------------
-
 	public final static int UNCLOSED_INDEX = -1;
 
 	public final static int UNDEFINED_INDEX = -2;
 
 	public final static Hit UNDEFINED = new Hit(UNDEFINED_INDEX, null, null);
-
-	// -------------------------------------------------
 
 	/**
 	 * 目标词语在词典中的位置，或者在字典没有该词语是表示其他意思(参见以上静态变量定义的情况)
@@ -66,24 +61,17 @@ public class Hit {
 	 */
 	private Word next;
 
-	// -------------------------------------------------
-
 	/**
 	 * 
-	 * @param index
-	 *            目标词语在词典中的位置，或者在字典没有该词语是表示其他意思(参见以上静态变量定义的情况)
-	 * @param word
-	 *            查找命中时，词典中相应的词
-	 * @param next
-	 *            词典中命中词的下一个单词，或{@link #isUnclosed()}为true时最接近的下一个词(参见本类的注释)
+	 * @param index 目标词语在词典中的位置，或者在字典没有该词语是表示其他意思(参见以上静态变量定义的情况)
+	 * @param word  查找命中时，词典中相应的词
+	 * @param next  词典中命中词的下一个单词，或{@link #isUnclosed()}为true时最接近的下一个词(参见本类的注释)
 	 */
 	public Hit(int index, Word word, Word next) {
 		this.index = index;
 		this.word = word;
 		this.next = next;
 	}
-
-	// -------------------------------------------------
 
 	/**
 	 * 查找命中时，词典中相应的词
@@ -94,6 +82,7 @@ public class Hit {
 
 	/**
 	 * 目标词语在词典中的位置，或者在字典没有该词语是表示其他意思(参见以上静态变量定义的情况)
+	 * 
 	 * @return
 	 */
 	public int getIndex() {
@@ -102,14 +91,16 @@ public class Hit {
 
 	/**
 	 * 词典中命中词的下一个单词，或{@link #isUnclosed()}为true时最接近的下一个词(参见本类的注释)
+	 * 
 	 * @return
 	 */
 	public Word getNext() {
 		return next;
 	}
-	
+
 	/**
 	 * 是否在字典中检索到要检索的词语
+	 * 
 	 * @return
 	 */
 	public boolean isHit() {
@@ -118,24 +109,22 @@ public class Hit {
 
 	/**
 	 * 是否有以当前检索词语开头的词语
+	 * 
 	 * @return
 	 */
 	public boolean isUnclosed() {
 		return UNCLOSED_INDEX == this.index
-				|| (this.next != null
-						&& this.next.length() >= this.word.length() && this.next
-						.startsWith(word));
+				|| (this.next != null && this.next.length() >= this.word.length() && this.next.startsWith(word));
 	}
 
 	/**
 	 * 字典中没有当前检索的词语，或以其开头的词语
+	 * 
 	 * @return
 	 */
 	public boolean isUndefined() {
 		return UNDEFINED.index == this.index;
 	}
-
-	// -------------------------------------------------
 
 	void setIndex(int index) {
 		this.index = index;
@@ -148,8 +137,6 @@ public class Hit {
 	void setNext(Word next) {
 		this.next = next;
 	}
-
-	// -------------------------------------------------
 
 	public int hashCode() {
 		final int PRIME = 31;

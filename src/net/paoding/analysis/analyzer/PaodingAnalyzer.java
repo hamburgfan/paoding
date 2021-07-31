@@ -1,24 +1,14 @@
-/**
- * Copyright 2007 The Apache Software Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package net.paoding.analysis.analyzer;
 
 import java.util.Properties;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.Tokenizer;
+
 import net.paoding.analysis.Constants;
 import net.paoding.analysis.analyzer.estimate.TryPaodingAnalyzer;
+import net.paoding.analysis.analyzer.impl.MaxWordLengthTokenCollector;
+import net.paoding.analysis.analyzer.impl.MostWordsTokenCollector;
 import net.paoding.analysis.knife.Knife;
 import net.paoding.analysis.knife.Paoding;
 import net.paoding.analysis.knife.PaodingMaker;
@@ -36,12 +26,38 @@ import net.paoding.analysis.knife.PaodingMaker;
  * 
  * @author Zhiliang Wang [qieqie.wang@gmail.com]
  * 
- * @see PaodingAnalyzerBean
+ * @see PaodingAnalyzer
  * 
  * @since 1.0
  * 
  */
-public class PaodingAnalyzer extends PaodingAnalyzerBean {
+public class PaodingAnalyzer extends Analyzer {
+
+	/**
+	 * 最多切分
+	 */
+	public static final int MOST_WORDS_MODE = 1;
+
+	/**
+	 * 按最大切分
+	 */
+	public static final int MAX_WORD_LENGTH_MODE = 2;
+
+	/**
+	 * 用于向PaodingTokenizer提供，分解文本字符
+	 * 
+	 * @see PaodingTokenizer#next()
+	 * 
+	 */
+	private Knife knife;
+
+	/**
+	 * @see #MOST_WORDS_MODE
+	 * @see #MAX_WORD_LENGTH_MODE
+	 */
+	private int mode = MOST_WORDS_MODE;
+
+	private Class modeClass;
 
 	/**
 	 * 根据类路径下的paoding-analysis.properties构建一个PaodingAnalyzer对象
@@ -59,6 +75,36 @@ public class PaodingAnalyzer extends PaodingAnalyzerBean {
 		init(propertiesPath);
 	}
 
+	/**
+	 * @see #setKnife(Knife)
+	 * @param knife
+	 */
+	public PaodingAnalyzer(Knife knife) {
+		this.knife = knife;
+	}
+
+	/**
+	 * @see #setKnife(Knife)
+	 * @see #setMode(int)
+	 * @param knife
+	 * @param mode
+	 */
+	public PaodingAnalyzer(Knife knife, int mode) {
+		this.knife = knife;
+		this.mode = mode;
+	}
+
+	/**
+	 * @see #setKnife(Knife)
+	 * @see #setMode(int)
+	 * @param knife
+	 * @param mode
+	 */
+	public PaodingAnalyzer(Knife knife, String mode) {
+		this.knife = knife;
+		this.setMode(mode);
+	}
+
 	protected void init(String propertiesPath) {
 		// 根据PaodingMaker说明，
 		// 1、多次调用getProperties()，返回的都是同一个properties实例(只要属性文件没发生过修改)
@@ -68,11 +114,106 @@ public class PaodingAnalyzer extends PaodingAnalyzerBean {
 			propertiesPath = PaodingMaker.DEFAULT_PROPERTIES_PATH;
 		}
 		Properties properties = PaodingMaker.getProperties(propertiesPath);
-		String mode = Constants
-				.getProperty(properties, Constants.ANALYZER_MODE);
+		String mode = Constants.getProperty(properties, Constants.ANALYZER_MODE);
 		Paoding paoding = PaodingMaker.make(properties);
 		setKnife(paoding);
 		setMode(mode);
+	}
+
+	public Knife getKnife() {
+		return knife;
+	}
+
+	public void setKnife(Knife knife) {
+		this.knife = knife;
+	}
+
+	public int getMode() {
+		return mode;
+	}
+
+	/**
+	 * 设置分析器模式.
+	 * <p>
+	 * 
+	 * @param mode
+	 */
+	public void setMode(int mode) {
+		if (mode != MOST_WORDS_MODE && mode != MAX_WORD_LENGTH_MODE) {
+			throw new IllegalArgumentException("wrong mode:" + mode);
+		}
+		this.mode = mode;
+		this.modeClass = null;
+	}
+
+	/**
+	 * 设置分析器模式类。
+	 * 
+	 * @param modeClass TokenCollector的实现类。
+	 */
+	public void setModeClass(Class modeClass) {
+		this.modeClass = modeClass;
+	}
+
+	public void setModeClass(String modeClass) {
+		try {
+			this.modeClass = Class.forName(modeClass);
+		} catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException("not found mode class:" + e.getMessage());
+		}
+	}
+
+	public void setMode(String mode) {
+		if (mode.startsWith("class:")) {
+			setModeClass(mode.substring("class:".length()));
+		} else {
+			if ("most-words".equalsIgnoreCase(mode) || "default".equalsIgnoreCase(mode)
+					|| ("" + MOST_WORDS_MODE).equals(mode)) {
+				setMode(MOST_WORDS_MODE);
+			} else if ("max-word-length".equalsIgnoreCase(mode) || ("" + MAX_WORD_LENGTH_MODE).equals(mode)) {
+				setMode(MAX_WORD_LENGTH_MODE);
+			} else {
+				throw new IllegalArgumentException("不合法的分析器Mode参数设置:" + mode);
+			}
+		}
+	}
+
+//	public TokenStream tokenStream(String fieldName, Reader reader) {
+//		if (knife == null) {
+//			throw new NullPointerException("knife should be set before token");
+//		}
+//		// PaodingTokenizer是TokenStream实现，使用knife解析reader流入的文本
+//		return new PaodingTokenizer(reader, knife, createTokenCollector());
+//	}
+
+	@Override
+	protected TokenStreamComponents createComponents(String fieldName) {
+		if (knife == null) {
+			throw new NullPointerException("knife should be set before token");
+		}
+		// PaodingTokenizer是TokenStream实现，使用knife解析reader流入的文本
+		Tokenizer source = new PaodingTokenizer(knife, createTokenCollector());
+		return new TokenStreamComponents(source, source);
+	}
+
+	protected TokenCollector createTokenCollector() {
+		if (modeClass != null) {
+			try {
+				return (TokenCollector) modeClass.newInstance();
+			} catch (InstantiationException e) {
+				throw new IllegalArgumentException("wrong mode class:" + e.getMessage());
+			} catch (IllegalAccessException e) {
+				throw new IllegalArgumentException("wrong mode class:" + e.getMessage());
+			}
+		}
+		switch (mode) {
+		case MOST_WORDS_MODE:
+			return new MostWordsTokenCollector();
+		case MAX_WORD_LENGTH_MODE:
+			return new MaxWordLengthTokenCollector();
+		default:
+			throw new Error("never happened");
+		}
 	}
 
 	/**
@@ -89,65 +230,12 @@ public class PaodingAnalyzer extends PaodingAnalyzerBean {
 	 * 
 	 * @param args
 	 */
+
 	public static void main(String[] args) {
 		if (System.getProperty("paoding.try.app") == null) {
 			System.setProperty("paoding.try.app", "PaodingAnalyzer");
 			System.setProperty("paoding.try.cmd", "java PaodingAnalyzer");
 		}
 		TryPaodingAnalyzer.main(args);
-	}
-
-	// --------------------------------------------------
-
-	/**
-	 * @param knife
-	 * @param default_mode
-	 * @deprecated
-	 */
-	public PaodingAnalyzer(Knife knife, int mode) {
-		super(knife, mode);
-	}
-
-	/**
-	 * 等价于maxMode()
-	 * 
-	 * @param knife
-	 * @return
-	 * @deprecated
-	 */
-	public static PaodingAnalyzer queryMode(Knife knife) {
-		return maxMode(knife);
-	}
-
-	/**
-	 * 
-	 * @param knife
-	 * @return
-	 * @deprecated
-	 */
-	public static PaodingAnalyzer defaultMode(Knife knife) {
-		return new PaodingAnalyzer(knife, MOST_WORDS_MODE);
-	}
-
-	/**
-	 * 
-	 * @param knife
-	 * @return
-	 * @deprecated
-	 */
-	public static PaodingAnalyzer maxMode(Knife knife) {
-		return new PaodingAnalyzer(knife, MAX_WORD_LENGTH_MODE);
-	}
-
-	/**
-	 * 等价于defaultMode()
-	 * 
-	 * @param knife
-	 * @return
-	 * @deprecated
-	 * 
-	 */
-	public static PaodingAnalyzer writerMode(Knife knife) {
-		return defaultMode(knife);
 	}
 }

@@ -39,7 +39,7 @@ public class KnifeBox implements Knife {
 	public KnifeBox() {
 	}
 
-	public KnifeBox(List/* <Knife> */knives) {
+	public KnifeBox(List/* <Knife> */ knives) {
 		this.setKnives(knives);
 	}
 
@@ -57,7 +57,7 @@ public class KnifeBox implements Knife {
 		return knives;
 	}
 
-	public void setKnives(List/* <Knife> */knifeList) {
+	public void setKnives(List/* <Knife> */ knifeList) {
 		if (knifeList == null) {
 			knifeList = new ArrayList(0);
 		}
@@ -68,7 +68,7 @@ public class KnifeBox implements Knife {
 			this.knives[i] = (Knife) iter.next();
 		}
 	}
-	
+
 	public void setKnives(Knife[] knives) {
 		if (knives == null) {
 			knives = new Knife[0];

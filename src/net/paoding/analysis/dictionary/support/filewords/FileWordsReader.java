@@ -38,22 +38,21 @@ import net.paoding.analysis.knife.CharSet;
  */
 public class FileWordsReader {
 
-	public static Map/*<String, Set<Word>>*/ readWords(
-			String fileOrDirectory, String charsetName) throws IOException {
+	public static Map/* <String, Set<Word>> */ readWords(String fileOrDirectory, String charsetName)
+			throws IOException {
 		SimpleReadListener l = new SimpleReadListener();
 		readWords(fileOrDirectory, l, charsetName);
 		return l.getResult();
 	}
-	
-	public static Map/*<String, Collection<Word>>*/ readWords(
-			String fileOrDirectory, String charsetName, Class collectionClass, String ext) throws IOException {
+
+	public static Map/* <String, Collection<Word>> */ readWords(String fileOrDirectory, String charsetName,
+			Class collectionClass, String ext) throws IOException {
 		SimpleReadListener2 l = new SimpleReadListener2(collectionClass, ext);
 		readWords(fileOrDirectory, l, charsetName);
 		return l.getResult();
 	}
 
-	public static void readWords(String fileOrDirectory, ReadListener l, String charsetName)
-			throws IOException {
+	public static void readWords(String fileOrDirectory, ReadListener l, String charsetName) throws IOException {
 		File file;
 		if (fileOrDirectory.startsWith("classpath:")) {
 			String name = fileOrDirectory.substring("classpath:".length());
@@ -62,15 +61,14 @@ public class FileWordsReader {
 				throw new FileNotFoundException("file \"" + name + "\" not found in classpath!");
 			}
 			file = new File(url.getFile());
-		}
-		else {
+		} else {
 			file = new File(fileOrDirectory);
 			if (!file.exists()) {
 				throw new FileNotFoundException("file \"" + fileOrDirectory + "\" not found!");
 			}
 		}
-		ArrayList/*<File>*/ dirs = new ArrayList/*<File>*/();
-		LinkedList/*<File>*/ dics = new LinkedList/*<File>*/();
+		ArrayList/* <File> */ dirs = new ArrayList/* <File> */();
+		LinkedList/* <File> */ dics = new LinkedList/* <File> */();
 		String dir;
 		if (file.isDirectory()) {
 			dirs.add(file);
@@ -83,7 +81,7 @@ public class FileWordsReader {
 		while (index < dirs.size()) {
 			File cur = (File) dirs.get(index++);
 			File[] files = cur.listFiles();
-			for (int i = 0; i < files.length; i ++) {
+			for (int i = 0; i < files.length; i++) {
 				File f = files[i];
 				if (f.isDirectory()) {
 					dirs.add(f);
@@ -94,14 +92,12 @@ public class FileWordsReader {
 		}
 		for (Iterator iter = dics.iterator(); iter.hasNext();) {
 			File f = (File) iter.next();
-			String name = f.getAbsolutePath().substring(
-						dir.length() + 1);
+			String name = f.getAbsolutePath().substring(dir.length() + 1);
 			name = name.replace('\\', '/');
 			if (!l.onFileBegin(name)) {
 				continue;
 			}
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					new FileInputStream(f), charsetName));
+			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(f), charsetName));
 			String word;
 			boolean firstInDic = true;
 			while ((word = in.readLine()) != null) {
@@ -122,5 +118,5 @@ public class FileWordsReader {
 			in.close();
 		}
 	}
-	
+
 }

@@ -15,7 +15,6 @@
  */
 package net.paoding.analysis.dictionary.support.filewords;
 
-
 /**
  * 
  * @author Zhiliang Wang [qieqie.wang@gmail.com]
@@ -25,6 +24,8 @@ package net.paoding.analysis.dictionary.support.filewords;
  */
 public interface ReadListener {
 	public boolean onFileBegin(String file);
+
 	public void onFileEnd(String file);
+
 	public void onWord(String word);
 }

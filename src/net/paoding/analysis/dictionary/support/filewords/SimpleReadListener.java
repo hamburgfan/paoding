@@ -30,8 +30,8 @@ import net.paoding.analysis.knife.CharSet;
  * 
  */
 public class SimpleReadListener implements ReadListener {
-	private Map/* <String, Set<Word>> */dics = new Hashtable/* <String, Set<Word>> */();
-	private HashSet/* <Word> */words = new HashSet/* <Word> */();
+	private Map/* <String, Set<Word>> */ dics = new Hashtable/* <String, Set<Word>> */();
+	private HashSet/* <Word> */ words = new HashSet/* <Word> */();
 	private String ext = ".dic";
 
 	public SimpleReadListener(String ext) {
@@ -57,8 +57,7 @@ public class SimpleReadListener implements ReadListener {
 
 	public void onWord(String wordText) {
 		wordText = wordText.trim().toLowerCase();
-		if (wordText.length() == 0 || wordText.charAt(0) == '#'
-				|| wordText.charAt(0) == '-') {
+		if (wordText.length() == 0 || wordText.charAt(0) == '#' || wordText.charAt(0) == '-') {
 			return;
 		}
 		// 去除汉字数字词
@@ -86,8 +85,7 @@ public class SimpleReadListener implements ReadListener {
 		int index = wordText.indexOf('[');
 		if (index == -1) {
 			words.add(new Word(wordText));
-		}
-		else {
+		} else {
 			Word w = new Word(wordText.substring(0, index));
 			int mindex = wordText.indexOf("m=", index);
 			if (mindex != -1) {
@@ -99,7 +97,7 @@ public class SimpleReadListener implements ReadListener {
 		}
 	}
 
-	public Map/* <String, Set<String>> */getResult() {
+	public Map/* <String, Set<String>> */ getResult() {
 		return dics;
 	}
 

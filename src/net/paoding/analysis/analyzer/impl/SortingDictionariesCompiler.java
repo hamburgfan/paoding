@@ -20,7 +20,7 @@ import net.paoding.analysis.knife.Knife;
 
 public class SortingDictionariesCompiler implements DictionariesCompiler {
 	public static final String VERSION = "2";
-	
+
 	public boolean shouldCompile(Properties p) throws Exception {
 		String lastModifieds = p.getProperty("paoding.analysis.properties.lastModifieds");
 		String files = p.getProperty("paoding.analysis.properties.files");
@@ -37,15 +37,13 @@ public class SortingDictionariesCompiler implements DictionariesCompiler {
 			String clazz = compiledProperties.getProperty("paoding.analysis.compiler.class");
 			String version = compiledProperties.getProperty("paoding.analysis.compiler.version");
 			if (lastModifieds.equals(compiledLastModifieds) && files.equals(compiledFiles)
-					&& this.getClass().getName().equalsIgnoreCase(clazz)
-					&& VERSION.equalsIgnoreCase(version)) {
+					&& this.getClass().getName().equalsIgnoreCase(clazz) && VERSION.equalsIgnoreCase(version)) {
 				return false;
 			}
 		}
 		return true;
 	}
-	
-	
+
 	public void compile(Dictionaries dictionaries, Knife knife, Properties p) throws Exception {
 		String dicHome = p.getProperty("paoding.dic.home.absolute.path");
 		String noiseCharactor = getProperty(p, Constants.DIC_NOISE_CHARACTOR);
@@ -54,11 +52,11 @@ public class SortingDictionariesCompiler implements DictionariesCompiler {
 		String confucianFamilyName = getProperty(p, Constants.DIC_CONFUCIAN_FAMILY_NAME);
 		String combinatorics = getProperty(p, Constants.DIC_FOR_COMBINATORICS);
 		String charsetName = getProperty(p, Constants.DIC_CHARSET);
-		
+
 		File dicHomeFile = new File(dicHome);
 		File compiledDicHomeFile = new File(dicHomeFile, ".compiled/sorting");
 		compiledDicHomeFile.mkdirs();
-		
+
 		//
 		Dictionary vocabularyDictionary = dictionaries.getVocabularyDictionary();
 		File vocabularyFile = new File(compiledDicHomeFile, "vocabulary.dic.compiled");
@@ -88,10 +86,9 @@ public class SortingDictionariesCompiler implements DictionariesCompiler {
 		//
 		File compliedMetadataFile = new File(dicHomeFile, ".compiled/sorting/.metadata");
 		if (compliedMetadataFile.exists()) {
-			//compliedMetadataFile.setWritable(true);
+			// compliedMetadataFile.setWritable(true);
 			compliedMetadataFile.delete();
-		}
-		else {
+		} else {
 			compliedMetadataFile.getParentFile().mkdirs();
 		}
 		OutputStream compiledPropertiesOutput = new FileOutputStream(compliedMetadataFile);
@@ -107,19 +104,15 @@ public class SortingDictionariesCompiler implements DictionariesCompiler {
 		compliedMetadataFile.setReadOnly();
 	}
 
-	
-	
-	private void sortCompile(final Dictionary dictionary, 
-			File dicFile, String charsetName) throws FileNotFoundException,
-			IOException, UnsupportedEncodingException {
+	private void sortCompile(final Dictionary dictionary, File dicFile, String charsetName)
+			throws FileNotFoundException, IOException, UnsupportedEncodingException {
 		int wordsSize = dictionary.size();
 		if (dicFile.exists()) {
-			//dicFile.setWritable(true);
+			// dicFile.setWritable(true);
 			dicFile.delete();
 		}
-		BufferedOutputStream out = new BufferedOutputStream(
-				new FileOutputStream(dicFile), 1024 * 16);
-		
+		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(dicFile), 1024 * 16);
+
 		for (int i = 0; i < wordsSize; i++) {
 			Word word = dictionary.get(i);
 			out.write(word.getText().getBytes(charsetName));
@@ -135,7 +128,7 @@ public class SortingDictionariesCompiler implements DictionariesCompiler {
 		out.close();
 		dicFile.setReadOnly();
 	}
-	
+
 	public Dictionaries readCompliedDictionaries(Properties p) {
 		String dicHomeAbsolutePath = p.getProperty("paoding.dic.home.absolute.path");
 		String noiseCharactor = getProperty(p, Constants.DIC_NOISE_CHARACTOR);
@@ -144,14 +137,12 @@ public class SortingDictionariesCompiler implements DictionariesCompiler {
 		String confucianFamilyName = getProperty(p, Constants.DIC_CONFUCIAN_FAMILY_NAME);
 		String combinatorics = getProperty(p, Constants.DIC_FOR_COMBINATORICS);
 		String charsetName = getProperty(p, Constants.DIC_CHARSET);
-		return new CompiledFileDictionaries(
-				dicHomeAbsolutePath + "/.compiled/sorting",
-				noiseCharactor, noiseWord, unit,
+		return new CompiledFileDictionaries(dicHomeAbsolutePath + "/.compiled/sorting", noiseCharactor, noiseWord, unit,
 				confucianFamilyName, combinatorics, charsetName);
 	}
-	
+
 	private static String getProperty(Properties p, String name) {
 		return Constants.getProperty(p, name);
 	}
-	
+
 }

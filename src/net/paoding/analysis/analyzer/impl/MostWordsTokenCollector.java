@@ -19,8 +19,6 @@ import java.util.Iterator;
 
 import net.paoding.analysis.analyzer.TokenCollector;
 
-import org.apache.lucene.analysis.Token;
-
 /**
  * 
  * @author Zhiliang Wang [qieqie.wang@gmail.com]
@@ -31,6 +29,7 @@ public class MostWordsTokenCollector implements TokenCollector, Iterator {
 
 	private LinkedToken firstToken;
 	private LinkedToken lastToken;
+	private LinkedToken nextLinkedToken;
 
 	/**
 	 * Collector接口实现。<br>
@@ -38,6 +37,8 @@ public class MostWordsTokenCollector implements TokenCollector, Iterator {
 	 * 
 	 */
 	public void collect(String word, int begin, int end) {
+		// System.out.println("[INFO1] begin: " + begin + ", end: " + end + ", " +
+		// word);
 		LinkedToken tokenToAdd = new LinkedToken(word, begin, end);
 		if (firstToken == null) {
 			firstToken = tokenToAdd;
@@ -51,8 +52,7 @@ public class MostWordsTokenCollector implements TokenCollector, Iterator {
 			//
 		} else {
 			LinkedToken curTokenToTry = lastToken.pre;
-			while (curTokenToTry != null
-					&& tokenToAdd.compareTo(curTokenToTry) < 0) {
+			while (curTokenToTry != null && tokenToAdd.compareTo(curTokenToTry) < 0) {
 				curTokenToTry = curTokenToTry.pre;
 			}
 			if (curTokenToTry == null) {
@@ -64,14 +64,12 @@ public class MostWordsTokenCollector implements TokenCollector, Iterator {
 				curTokenToTry.next.pre = tokenToAdd;
 				tokenToAdd.pre = curTokenToTry;
 				curTokenToTry.next = tokenToAdd;
-				
+
 			}
 		}
 	}
 
-	private LinkedToken nextLinkedToken;
-
-	public Iterator/* <Token> */iterator() {
+	public Iterator/* <Token> */ iterator() {
 		nextLinkedToken = firstToken;
 		firstToken = null;
 		return this;
@@ -100,6 +98,21 @@ public class MostWordsTokenCollector implements TokenCollector, Iterator {
 
 		public int compareTo(Object obj) {
 			LinkedToken that = (LinkedToken) obj;
+			// System.out.println(" this: " + this);
+			// System.out.println(" that: " + that);
+			// 简单/单单/简简单单/
+			if (this.startOffset() > that.startOffset())
+				return 1;
+			if (this.startOffset() == that.startOffset()) {
+				return this.endOffset() - that.endOffset();
+			}
+			return -1;
+		}
+
+		public int compareTo_origin(Object obj) {
+			LinkedToken that = (LinkedToken) obj;
+			// System.out.println(" this: " + this);
+			// System.out.println(" that: " + that);
 			// 简单/单单/简简单单/
 			if (this.endOffset() > that.endOffset())
 				return 1;
@@ -108,6 +121,10 @@ public class MostWordsTokenCollector implements TokenCollector, Iterator {
 			}
 			return -1;
 		}
-	}
 
+		@Override
+		public String toString() {
+			return "begin: " + super.startOffset() + ", end: " + super.endOffset() + ", " + super.termText();
+		}
+	}
 }

@@ -27,9 +27,5 @@ import net.paoding.analysis.knife.Collector;
  */
 public interface TokenCollector extends Collector {
 
-	/**
-	 * 
-	 * @return
-	 */
-	public Iterator/* <Token> */ iterator();
+	public Iterator iterator();
 }

@@ -17,6 +17,7 @@ package net.paoding.analysis.dictionary.support.detection;
 
 import java.io.File;
 import java.io.FileFilter;
+
 /**
  * 
  * @author Zhiliang Wang [qieqie.wang@gmail.com]

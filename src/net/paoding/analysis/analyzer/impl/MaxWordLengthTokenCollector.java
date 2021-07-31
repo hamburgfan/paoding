@@ -18,11 +18,7 @@ package net.paoding.analysis.analyzer.impl;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-
 import net.paoding.analysis.analyzer.TokenCollector;
-
-import org.apache.lucene.analysis.Token;
-
 
 /**
  * 
@@ -53,6 +49,8 @@ public class MaxWordLengthTokenCollector implements TokenCollector {
 	}
 
 	public void collect(String word, int offset, int end) {
+		// System.out.println("[INFO1] offset: " + offset + ", end: " + end + ", " +
+		// word);
 		Token c = candidate != null ? candidate : last;
 		if (c == null) {
 			candidate = new Token(word, offset, end);
@@ -70,9 +68,8 @@ public class MaxWordLengthTokenCollector implements TokenCollector {
 				candidate = null;
 			}
 		} else if (end >= c.endOffset()) {
-			if (last != null && last.startOffset() >= offset
-					&& last.endOffset() <= end) {
-				for (Iterator/* <Token> */ iter = tokens.iterator(); iter.hasNext();) {
+			if (last != null && last.startOffset() >= offset && last.endOffset() <= end) {
+				for (Iterator /* <Token> */ iter = tokens.iterator(); iter.hasNext();) {
 					last = (Token) iter.next();
 					if (last.startOffset() >= offset && last.endOffset() <= end) {
 						iter.remove();

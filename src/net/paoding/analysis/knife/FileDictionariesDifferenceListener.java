@@ -39,8 +39,7 @@ public class FileDictionariesDifferenceListener implements DifferenceListener {
 	public FileDictionariesDifferenceListener() {
 	}
 
-	public FileDictionariesDifferenceListener(Dictionaries dictionaries,
-			KnifeBox knifeBox) {
+	public FileDictionariesDifferenceListener(Dictionaries dictionaries, KnifeBox knifeBox) {
 		this.dictionaries = (FileDictionaries) dictionaries;
 		this.knifeBox = knifeBox;
 	}
@@ -62,7 +61,7 @@ public class FileDictionariesDifferenceListener implements DifferenceListener {
 	}
 
 	public synchronized void on(Difference diff) {
-		List/* <Node> */all = new LinkedList/* <Node> */();
+		List/* <Node> */ all = new LinkedList/* <Node> */();
 		all.addAll((List/* <Node> */) diff.getDeleted());
 		all.addAll((List/* <Node> */) diff.getModified());
 		all.addAll((List/* <Node> */) diff.getNewcome());
@@ -73,7 +72,7 @@ public class FileDictionariesDifferenceListener implements DifferenceListener {
 			}
 		}
 		Knife[] knives = knifeBox.getKnives();
-		for (int i = 0; i < knives.length; i ++) {
+		for (int i = 0; i < knives.length; i++) {
 			Knife knife = knives[i];
 			if (knife instanceof DictionariesWare) {
 				((DictionariesWare) knife).setDictionaries(dictionaries);

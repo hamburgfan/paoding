@@ -36,7 +36,7 @@ public abstract class CombinatoricsKnife implements Knife, DictionariesWare {
 
 	protected Dictionary combinatoricsDictionary;
 
-	protected HashSet/* <String> */noiseTable;
+	protected HashSet/* <String> */ noiseTable;
 
 	public CombinatoricsKnife() {
 	}
@@ -99,13 +99,10 @@ public abstract class CombinatoricsKnife implements Knife, DictionariesWare {
 		// ->如果认为它应该是个词，那么只要配置对应的其它Knife实例，该Knife会有机会把它切出来的
 		// ->因为我们会返回point作为下一个Knife分词的开始。
 
-		int pointVote = collectPoint(collector, beef, offset, point, limit,
-				dicWordVote);
-		int limitVote = collectLimit(collector, beef, offset, point, limit,
-				dicWordVote);
+		int pointVote = collectPoint(collector, beef, offset, point, limit, dicWordVote);
+		int limitVote = collectLimit(collector, beef, offset, point, limit, dicWordVote);
 
-		return nextOffset(beef, offset, point, limit, pointVote, limitVote,
-				dicWordVote);
+		return nextOffset(beef, offset, point, limit, pointVote, limitVote, dicWordVote);
 	}
 
 	/**
@@ -116,16 +113,12 @@ public abstract class CombinatoricsKnife implements Knife, DictionariesWare {
 	 * 
 	 * @param collector
 	 * @param beef
-	 * @param offset
-	 *            本次分解的内容在beef中的开始位置
-	 * @param point
-	 *            本次分解的内容的第一个POINT性质字符的位置，-1表示不存在该性质的字符
-	 * @param limit
-	 *            本次分解的内容的LIMIT性质字符
+	 * @param offset    本次分解的内容在beef中的开始位置
+	 * @param point     本次分解的内容的第一个POINT性质字符的位置，-1表示不存在该性质的字符
+	 * @param limit     本次分解的内容的LIMIT性质字符
 	 * @return 投票下一个Knife开始分词的位置；-1表示弃权。默认方法实现：弃权。
 	 */
-	protected int collectPoint(Collector collector, Beef beef, int offset,
-			int point, int limit, int dicWordVote) {
+	protected int collectPoint(Collector collector, Beef beef, int offset, int point, int limit, int dicWordVote) {
 		if (point != -1 && dicWordVote == -1) {
 			collectIfNotNoise(collector, beef, offset, point);
 		}
@@ -140,19 +133,15 @@ public abstract class CombinatoricsKnife implements Knife, DictionariesWare {
 	 * 
 	 * @param collector
 	 * @param beef
-	 * @param offset
-	 *            本次分解的内容在beef中的开始位置
-	 * @param point
-	 *            本次分解的内容的第一个POINT性质字符的位置，-1表示不存在该性质的字符
-	 * @param limit
-	 *            本次分解的内容的LIMIT性质字符
+	 * @param offset      本次分解的内容在beef中的开始位置
+	 * @param point       本次分解的内容的第一个POINT性质字符的位置，-1表示不存在该性质的字符
+	 * @param limit       本次分解的内容的LIMIT性质字符
 	 * 
-	 * @param dicWordVote 
+	 * @param dicWordVote
 	 * 
 	 * @return 投票下一个Knife开始分词的位置；-1表示弃权。默认方法实现：弃权。
 	 */
-	protected int collectLimit(Collector collector, Beef beef, int offset,
-			int point, int limit, int dicWordVote) {
+	protected int collectLimit(Collector collector, Beef beef, int offset, int point, int limit, int dicWordVote) {
 		if (dicWordVote == -1) {
 			collectIfNotNoise(collector, beef, offset, limit);
 		}
@@ -177,11 +166,9 @@ public abstract class CombinatoricsKnife implements Knife, DictionariesWare {
 	 * @param limit
 	 * @return
 	 */
-	protected int tryDicWord(Collector collector, Beef beef, int offset,
-			int limit) {
+	protected int tryDicWord(Collector collector, Beef beef, int offset, int limit) {
 		int ret = limit;
-		for (int end = limit + 1, count = limit - offset + 1; end <= beef
-				.length(); end++, count++) {
+		for (int end = limit + 1, count = limit - offset + 1; end <= beef.length(); end++, count++) {
 			Hit hit = combinatoricsDictionary.search(beef, offset, count);
 			if (hit.isUndefined()) {
 				break;
@@ -212,8 +199,7 @@ public abstract class CombinatoricsKnife implements Knife, DictionariesWare {
 	 * @param offset
 	 * @param end
 	 */
-	protected void collectIfNotNoise(Collector collector, Beef beef,
-			int offset, int end) {
+	protected void collectIfNotNoise(Collector collector, Beef beef, int offset, int end) {
 		// 将offset和end之间的词(不包含end位置)创建出来给word
 		// 如果该词语为噪音词，则重新丢弃之(设置为null)，
 		String word = beef.subSequence(offset, end).toString();
@@ -253,8 +239,7 @@ public abstract class CombinatoricsKnife implements Knife, DictionariesWare {
 	 * @param offset
 	 * @param end
 	 */
-	protected void doCollect(Collector collector, String word, Beef beef,
-			int offset, int end) {
+	protected void doCollect(Collector collector, String word, Beef beef, int offset, int end) {
 		collector.collect(word, offset, end);
 	}
 
@@ -262,22 +247,16 @@ public abstract class CombinatoricsKnife implements Knife, DictionariesWare {
 	 * 根据字符串性质位置，以及分词结果投票，决出下一个Knife应该从哪一个位置开始探测切词
 	 * 
 	 * @param beef
-	 * @param offset
-	 *            本次分词的开始位置
-	 * @param point
-	 *            本次分词的第一个POINT性质的字符位置，-1表示没有该性质的字符
-	 * @param limit
-	 *            本次分词的第一个LIMIT性质的字符位置
-	 * @param pointVote
-	 *            收集从offset到第一个POINT性质字符词汇时的投票，-1表示弃权
-	 * @param limitVote
-	 *            收集从offset到第一个LIMIT性质字符词汇时的投票，-1表示弃权
-	 * @param dicWordVote
-	 *            收集combinatorics词典词语时的投票，-1表示弃权
+	 * @param offset      本次分词的开始位置
+	 * @param point       本次分词的第一个POINT性质的字符位置，-1表示没有该性质的字符
+	 * @param limit       本次分词的第一个LIMIT性质的字符位置
+	 * @param pointVote   收集从offset到第一个POINT性质字符词汇时的投票，-1表示弃权
+	 * @param limitVote   收集从offset到第一个LIMIT性质字符词汇时的投票，-1表示弃权
+	 * @param dicWordVote 收集combinatorics词典词语时的投票，-1表示弃权
 	 * @return
 	 */
-	protected int nextOffset(Beef beef, int offset, int point, int limit,
-			int pointVote, int limitVote, int dicWordVote) {
+	protected int nextOffset(Beef beef, int offset, int point, int limit, int pointVote, int limitVote,
+			int dicWordVote) {
 		int max = pointVote > limitVote ? pointVote : limitVote;
 		max = max > dicWordVote ? max : dicWordVote;
 		if (max == -1) {
