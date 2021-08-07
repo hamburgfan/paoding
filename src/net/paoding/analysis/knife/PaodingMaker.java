@@ -542,7 +542,12 @@ public class PaodingMaker {
 
 	private static String getSystemEnv(String name) {
 		try {
-			return System.getenv(name);
+			String val = System.getProperty(name.toLowerCase());
+			if(val == null) {
+				return System.getenv(name);
+			} else {
+				return val;
+			}
 		} catch (Error error) {
 			String osName = System.getProperty("os.name").toLowerCase();
 			try {
